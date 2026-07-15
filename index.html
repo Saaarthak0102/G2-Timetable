@@ -396,7 +396,7 @@ const DAY_LABELS = { Mon:"Monday", Tue:"Tuesday", Wed:"Wednesday", Thu:"Thursday
 const WEEK_ORDER = ["Mon","Tue","Wed","Thu","Fri","Sat"];
 
 // Subject legend
-const SUBJECTS = {
+let SUBJECTS = {
   RCA:   {full:"Real and Complex Analysis", code:"26B11MA318"},
   HSS:   {full:"HS311 — Humanities/Soc. Science elective (name not listed in source file)", code:"HS311"},
   OS:    {full:"Operating Systems", code:"24B11CS312"},
@@ -410,7 +410,7 @@ const SUBJECTS = {
 function C(start,end,type,subj,venue){ return {start,end,type,kind:'class',subj,venue}; }
 function BR(start,end,label){ return {start,end,type:'B',kind:'break',label}; }
 
-const SCHEDULE = {
+let SCHEDULE = {
   Mon:[
     C(8,10,'P','IPCV','CL17/18'),
     C(10,11,'L','RCA','CS7'),
@@ -451,6 +451,42 @@ const SCHEDULE = {
     C(10,12,'P','OS','CL14/15'),
   ],
 };
+
+/* ============ LOCAL STORAGE PERSISTENCE & OFFLINE CACHE ============ */
+const STORAGE_KEY_SCHEDULE = 'g2_timetable_schedule_v1';
+const STORAGE_KEY_SUBJECTS = 'g2_timetable_subjects_v1';
+
+try {
+  // Save defaults to localStorage if not present, or load from localStorage if already saved
+  if (!localStorage.getItem(STORAGE_KEY_SCHEDULE)) {
+    localStorage.setItem(STORAGE_KEY_SCHEDULE, JSON.stringify(SCHEDULE));
+  } else {
+    const savedSchedule = JSON.parse(localStorage.getItem(STORAGE_KEY_SCHEDULE));
+    if (savedSchedule && typeof savedSchedule === 'object') {
+      SCHEDULE = savedSchedule;
+    }
+  }
+
+  if (!localStorage.getItem(STORAGE_KEY_SUBJECTS)) {
+    localStorage.setItem(STORAGE_KEY_SUBJECTS, JSON.stringify(SUBJECTS));
+  } else {
+    const savedSubjects = JSON.parse(localStorage.getItem(STORAGE_KEY_SUBJECTS));
+    if (savedSubjects && typeof savedSubjects === 'object') {
+      SUBJECTS = savedSubjects;
+    }
+  }
+} catch (e) {
+  console.warn('localStorage access failed or offline restricted:', e);
+}
+
+// Register Service Worker for 100% offline PWA capability
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then((reg) => console.log('[PWA] Service Worker registered for offline access:', reg.scope))
+      .catch((err) => console.warn('[PWA] Service Worker registration failed:', err));
+  });
+}
 
 /* ============ HELPERS ============ */
 function fmtHour(h){
