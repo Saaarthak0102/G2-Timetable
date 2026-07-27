@@ -400,9 +400,7 @@ let SUBJECTS = {
   RCA:   {full:"Real and Complex Analysis", code:"26B11MA318"},
   HSS:   {full:"HS311 — Humanities/Soc. Science elective (name not listed in source file)", code:"HS311"},
   OS:    {full:"Operating Systems", code:"24B11CS312"},
-  OPT:   {full:"Optimization Methods and Applications (Maths Elective)", code:"26B12MA312"},
   IPCV:  {full:"Fundamentals of Image Processing and Computer Vision (CS Elective)", code:"26B12CS316"},
-  EMT:   {full:"Engineering Materials and Technology (Science Elective)", code:"20B12PH311"},
   FSD:   {full:"Full Stack Development Lab", code:"FSD"},
   RPROG: {full:"R Programming Lab", code:"RPROG"},
 };
@@ -412,14 +410,11 @@ function BR(start,end,label){ return {start,end,type:'B',kind:'break',label}; }
 
 let SCHEDULE = {
   Mon:[
-    C(8,10,'P','IPCV','CL17/18'),
     C(10,11,'L','RCA','CS7'),
     BR(12,13,"Lunch"),
     C(13,15,'P','FSD','CL17/18'),
   ],
   Tue:[
-    C(8,9,'L','EMT','CR325'),
-    C(9,10,'L','OPT','FF6'),
     C(10,11,'L','RCA','CS3'),
     C(11,12,'L','HSS','CS3'),
     BR(12,13,"Lunch"),
@@ -430,31 +425,28 @@ let SCHEDULE = {
     C(11,12,'L','HSS','G6'),
     BR(12,13,"Lunch"),
     C(13,14,'L','OS','CS4'),
+    C(14,16,'P','IPCV','CL17/18'),
   ],
   Thu:[
     C(8,9,'L','IPCV','G2'),
-    C(9,10,'L','EMT','CR401'),
     C(10,11,'T','RCA','G5'),
     BR(12,13,"Lunch"),
     C(14,15,'T','RCA','G5'),
     C(15,16,'L','OS','G5'),
   ],
   Fri:[
-    C(8,9,'L','EMT','CR401'),
-    C(9,10,'L','OPT','FF8'),
     C(10,11,'L','OS','G2'),
     C(11,12,'L','HSS','G2'),
     BR(12,13,"Lunch"),
   ],
   Sat:[
-    C(8,9,'L','OPT','CR325'),
     C(10,12,'P','OS','CL14/15'),
   ],
 };
 
 /* ============ LOCAL STORAGE PERSISTENCE & OFFLINE CACHE ============ */
-const STORAGE_KEY_SCHEDULE = 'g2_timetable_schedule_v1';
-const STORAGE_KEY_SUBJECTS = 'g2_timetable_subjects_v1';
+const STORAGE_KEY_SCHEDULE = 'g2_timetable_schedule_v2';
+const STORAGE_KEY_SUBJECTS = 'g2_timetable_subjects_v2';
 
 try {
   // Save defaults to localStorage if not present, or load from localStorage if already saved
