@@ -1,318 +1,798 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>G2 — Weekly Timetable</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>G2 — Weekly Timetable</title>
 
-<!-- PWA / Phone Shortcut Icons & Manifest -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#b9a6e3">
-<link rel="icon" type="image/svg+xml" href="icon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="G2 Timetable">
+  <!-- PWA / Phone Shortcut Icons & Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#b9a6e3">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="G2 Timetable">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#faf7fc;
-    --surface:#ffffff;
-    --surface-2:#f4eefb;
-    --surface-3:#ede4f7;
-    --line:#e6dcf3;
-    --lilac:#b9a6e3;
-    --lilac-dk:#8f74c9;
-    --lilac-ink:#5d4d7a;
-    --blush:#f3cddf;
-    --blush-dk:#e2a6c3;
-    --sage:#cfead9;
-    --ink:#4a3f5c;
-    --muted:#948aa8;
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf7fc;
+      --surface: #ffffff;
+      --surface-2: #f4eefb;
+      --surface-3: #ede4f7;
+      --line: #e6dcf3;
+      --lilac: #b9a6e3;
+      --lilac-dk: #8f74c9;
+      --lilac-ink: #5d4d7a;
+      --blush: #f3cddf;
+      --blush-dk: #e2a6c3;
+      --sage: #cfead9;
+      --ink: #4a3f5c;
+      --muted: #948aa8;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
 
-    --lecture:#c9b6ea;
-    --tutorial:#f3cddf;
-    --practical:#cfead9;
-    --break-c:#efe9f7;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;height:100%;}
-  body{
-    background:
-      radial-gradient(ellipse at 15% -10%, rgba(185,166,227,0.18), transparent 55%),
-      radial-gradient(ellipse at 100% 0%, rgba(243,205,223,0.20), transparent 45%),
-      var(--bg);
-    color:var(--ink);
-    font-family:'Quicksand', sans-serif;
-    min-height:100%;
-    overflow-x:hidden;
-  }
-  ::selection{background:var(--lilac); color:#fff;}
+      --lecture: #c9b6ea;
+      --tutorial: #f3cddf;
+      --practical: #cfead9;
+      --break-c: #efe9f7;
+    }
 
-  /* ===== Top bar ===== */
-  .topbar{
-    position:sticky; top:0; z-index:40;
-    display:flex; align-items:center; justify-content:space-between;
-    gap:12px;
-    padding:calc(14px + var(--safe-top)) 18px 12px;
-    background:linear-gradient(180deg, rgba(250,247,252,0.97), rgba(250,247,252,0.86) 70%, rgba(250,247,252,0));
-    backdrop-filter:blur(6px);
-  }
-  .brand{display:flex; align-items:center; gap:10px;}
-  .brand .mark{
-    width:34px;height:34px;border-radius:11px;
-    background:linear-gradient(145deg,var(--lilac),var(--lilac-dk));
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Fraunces',serif; font-weight:700; font-size:14px; color:#fff;
-    box-shadow:0 0 0 1px rgba(255,255,255,0.5) inset, 0 6px 16px -8px rgba(143,116,201,0.7);
-    flex-shrink:0;
-  }
-  .brand .txt{line-height:1;}
-  .brand .txt b{
-    font-family:'Fraunces',serif; font-weight:700; font-size:15.5px; letter-spacing:0.2px;
-    display:block; color:var(--ink);
-  }
-  .brand .txt span{
-    font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--muted); letter-spacing:1.4px;
-  }
-  .full-btn{
-    display:flex; align-items:center; gap:8px;
-    background:var(--surface); border:1px solid var(--line);
-    color:var(--lilac-ink); font-family:'Quicksand'; font-weight:600; font-size:12.5px;
-    letter-spacing:0.3px;
-    padding:10px 14px; border-radius:12px; cursor:pointer;
-    transition:transform .15s ease, border-color .15s ease, background .15s ease;
-    white-space:nowrap;
-    box-shadow:0 2px 8px -4px rgba(143,116,201,0.35);
-  }
-  .full-btn:hover{border-color:var(--lilac); background:var(--surface-2);}
-  .full-btn:active{transform:scale(0.96);}
-  .full-btn .chk{
-    width:13px;height:13px;border-radius:50%; flex-shrink:0;
-    background:radial-gradient(circle at 35% 30%, #fff, var(--lilac) 70%);
-    box-shadow:0 0 0 1px var(--line);
-  }
+    * {
+      box-sizing: border-box;
+    }
 
-  /* ===== Page container ===== */
-  .page{max-width:640px; margin:0 auto; padding:4px 18px 28px;}
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
 
-  .datebar{
-    display:flex; align-items:baseline; justify-content:space-between;
-    margin:6px 2px 14px;
-  }
-  .datebar .day{
-    font-family:'Fraunces',serif; font-weight:700; font-size:26px; color:var(--ink);
-    letter-spacing:0.2px;
-  }
-  .datebar .sub{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);}
-  .clock{
-    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; color:var(--lilac-dk);
-    letter-spacing:0.5px;
-  }
+    body {
+      background:
+        radial-gradient(ellipse at 15% -10%, rgba(185, 166, 227, 0.18), transparent 55%),
+        radial-gradient(ellipse at 100% 0%, rgba(243, 205, 223, 0.20), transparent 45%),
+        var(--bg);
+      color: var(--ink);
+      font-family: 'Quicksand', sans-serif;
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--lilac);
+      color: #fff;
+    }
+
+    /* ===== Top bar ===== */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: calc(14px + var(--safe-top)) 18px 12px;
+      background: linear-gradient(180deg, rgba(250, 247, 252, 0.97), rgba(250, 247, 252, 0.86) 70%, rgba(250, 247, 252, 0));
+      backdrop-filter: blur(6px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand .mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: linear-gradient(145deg, var(--lilac), var(--lilac-dk));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset, 0 6px 16px -8px rgba(143, 116, 201, 0.7);
+      flex-shrink: 0;
+    }
+
+    .brand .txt {
+      line-height: 1;
+    }
+
+    .brand .txt b {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 15.5px;
+      letter-spacing: 0.2px;
+      display: block;
+      color: var(--ink);
+    }
+
+    .brand .txt span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      color: var(--muted);
+      letter-spacing: 1.4px;
+    }
+
+    .full-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--lilac-ink);
+      font-family: 'Quicksand';
+      font-weight: 600;
+      font-size: 12.5px;
+      letter-spacing: 0.3px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px -4px rgba(143, 116, 201, 0.35);
+    }
+
+    .full-btn:hover {
+      border-color: var(--lilac);
+      background: var(--surface-2);
+    }
+
+    .full-btn:active {
+      transform: scale(0.96);
+    }
+
+    .full-btn .chk {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: radial-gradient(circle at 35% 30%, #fff, var(--lilac) 70%);
+      box-shadow: 0 0 0 1px var(--line);
+    }
+
+    /* ===== Page container ===== */
+    .page {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 4px 18px 28px;
+    }
+
+    .datebar {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin: 6px 2px 14px;
+    }
+
+    .datebar .day {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 26px;
+      color: var(--ink);
+      letter-spacing: 0.2px;
+    }
+
+    .datebar .sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--lilac-dk);
+      letter-spacing: 0.5px;
+    }
 
 
 
-  /* ===== Hero / current class card ===== */
-  .hero{
-    position:relative; border-radius:18px; padding:18px 18px 16px;
-    background:linear-gradient(160deg, var(--surface), var(--surface-2));
-    border:1px solid var(--line);
-    margin-bottom:18px;
-    overflow:hidden;
-    box-shadow:0 10px 30px -18px rgba(143,116,201,0.4);
-  }
-  .hero.live{border-color:rgba(185,166,227,0.7); box-shadow:0 0 0 1px rgba(185,166,227,0.18), 0 14px 34px -16px rgba(185,166,227,0.55);}
-  .hero .stripe{
-    position:absolute; right:-40px; top:-40px; width:140px; height:140px;
-    background:conic-gradient(from 220deg, var(--lilac), transparent 40%);
-    opacity:0.28; filter:blur(4px);
-  }
-  .hero .eyebrow{
-    display:flex; align-items:center; gap:8px;
-    font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:1.8px; text-transform:uppercase;
-    color:var(--muted); margin-bottom:10px;
-  }
-  .hero.live .eyebrow{color:var(--lilac-dk);}
-  .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
-  .hero.live .dot{animation:pulse 1.6s ease-in-out infinite;}
-  @keyframes pulse{0%,100%{opacity:1; box-shadow:0 0 0 0 rgba(185,166,227,0.55);}50%{opacity:0.6; box-shadow:0 0 0 6px rgba(185,166,227,0);}}
-  .hero h2{
-    font-family:'Fraunces',serif; font-weight:700; font-size:20px; margin:0 0 6px; color:var(--ink);
-    letter-spacing:0.1px;
-  }
-  .hero .meta{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
-  .chip{
-    font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
-    padding:6px 10px; border-radius:8px; letter-spacing:0.3px;
-    background:var(--surface-2); color:var(--lilac-ink); border:1px solid var(--line);
-  }
-  .chip.venue::before{content:"📍 ";}
-  .chip.time::before{content:"⏱ ";}
-  .badge{
-    display:inline-flex; align-items:center; justify-content:center;
-    font-family:'Fraunces',serif; font-weight:700; font-size:10.5px;
-    padding:5px 10px; border-radius:8px; letter-spacing:0.6px; color:#4a3f5c;
-  }
-  .badge.L{background:var(--lecture); color:#4a3f5c;}
-  .badge.T{background:var(--tutorial); color:#5c3349;}
-  .badge.P{background:var(--practical); color:#2f5b40;}
-  .badge.B{background:var(--break-c); color:var(--muted);}
+    /* ===== Hero / current class card ===== */
+    .hero {
+      position: relative;
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+      background: linear-gradient(160deg, var(--surface), var(--surface-2));
+      border: 1px solid var(--line);
+      margin-bottom: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px -18px rgba(143, 116, 201, 0.4);
+    }
 
-  /* ===== Today list (compact, scrolls internally) ===== */
-  .list-head{
-    display:flex; align-items:center; justify-content:space-between;
-    margin:2px 4px 8px;
-  }
-  .list-head h3{
-    font-family:'Fraunces',serif; font-size:12.5px; letter-spacing:1.6px; text-transform:uppercase;
-    color:var(--muted); margin:0; font-weight:600;
-  }
-  .list-head .cnt{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);}
+    .hero.live {
+      border-color: rgba(185, 166, 227, 0.7);
+      box-shadow: 0 0 0 1px rgba(185, 166, 227, 0.18), 0 14px 34px -16px rgba(185, 166, 227, 0.55);
+    }
 
-  .today-scroll{
-    max-height:44vh;
-    overflow-y:auto;
-    border-radius:16px;
-    border:1px solid var(--line);
-    background:var(--surface);
-    padding:6px;
-    scrollbar-width:thin; scrollbar-color:var(--lilac) transparent;
-  }
-  .today-scroll::-webkit-scrollbar{width:6px;}
-  .today-scroll::-webkit-scrollbar-thumb{background:var(--lilac); border-radius:3px;}
+    .hero .stripe {
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 140px;
+      height: 140px;
+      background: conic-gradient(from 220deg, var(--lilac), transparent 40%);
+      opacity: 0.28;
+      filter: blur(4px);
+    }
 
-  .row-item{
-    display:flex; align-items:center; gap:12px;
-    padding:11px 10px; border-radius:12px; margin:3px 0;
-    border:1px solid transparent;
-    transition:background .15s ease;
-  }
-  .row-item.past{opacity:0.45;}
-  .row-item.live{background:rgba(185,166,227,0.14); border-color:rgba(185,166,227,0.45);}
-  .row-item.next{background:rgba(243,205,223,0.16); border-color:rgba(226,166,195,0.4);}
-  .row-item .t{
-    font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted); width:56px; flex-shrink:0;
-    line-height:1.25;
-  }
-  .row-item .stripe-bar{width:4px; align-self:stretch; border-radius:3px; flex-shrink:0;}
-  .row-item.type-L .stripe-bar{background:var(--lecture);}
-  .row-item.type-T .stripe-bar{background:var(--tutorial);}
-  .row-item.type-P .stripe-bar{background:var(--practical);}
-  .row-item.type-B .stripe-bar{background:var(--break-c);}
-  .row-item .body{flex:1; min-width:0;}
-  .row-item .subj{font-weight:700; font-size:14.5px; color:var(--ink);}
-  .row-item .venue{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted); margin-top:2px;}
-  .row-item .tag{flex-shrink:0; text-align:right;}
+    .hero .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
 
-  .empty-day{
-    padding:34px 16px; text-align:center; color:var(--muted);
-    font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.6;
-  }
-  .empty-day b{color:var(--lilac-dk); display:block; font-family:'Fraunces',serif; font-size:16px; margin-bottom:6px;}
+    .hero.live .eyebrow {
+      color: var(--lilac-dk);
+    }
 
-  .legend-note{
-    margin-top:16px; padding:0 4px;
-    font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted);
-    display:flex; gap:14px; flex-wrap:wrap;
-  }
-  .legend-note span{display:inline-flex; align-items:center; gap:5px;}
-  .legend-note i{width:9px;height:9px;border-radius:3px; display:inline-block;}
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
 
-  /* ===== Full timetable overlay ===== */
-  .overlay{
-    position:fixed; inset:0; z-index:100;
-    background:rgba(93,77,122,0.25); backdrop-filter:blur(3px);
-    display:flex; align-items:flex-end; justify-content:center;
-    opacity:0; pointer-events:none; transition:opacity .25s ease;
-  }
-  .overlay.show{opacity:1; pointer-events:auto;}
-  .sheet{
-    width:100%; max-width:960px; max-height:92vh;
-    background:var(--bg); border:1px solid var(--line);
-    border-radius:20px 20px 0 0;
-    display:flex; flex-direction:column;
-    transform:translateY(24px); transition:transform .3s cubic-bezier(.2,.8,.2,1);
-    box-shadow:0 -20px 60px -24px rgba(93,77,122,0.4);
-  }
-  .overlay.show .sheet{transform:translateY(0);}
-  .sheet-head{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 18px; border-bottom:1px solid var(--line);
-    background:var(--surface); border-radius:20px 20px 0 0;
-  }
-  .sheet-head h3{
-    font-family:'Fraunces',serif; font-weight:700; font-size:15px; margin:0; letter-spacing:0.1px; color:var(--ink);
-  }
-  .sheet-head h3 small{display:block; font-family:'JetBrains Mono',monospace; font-weight:500; font-size:9.5px; color:var(--muted); letter-spacing:1.2px; margin-top:3px;}
-  .close-btn{
-    width:34px;height:34px; border-radius:11px; background:var(--surface-2); border:1px solid var(--line);
-    color:var(--lilac-ink); font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-  }
-  .close-btn:hover{border-color:var(--lilac);}
-  .sheet-body{overflow:auto; padding:14px 14px 22px;}
+    .hero.live .dot {
+      animation: pulse 1.6s ease-in-out infinite;
+    }
 
-  table.grid{border-collapse:separate; border-spacing:5px; width:100%; min-width:680px;}
-  table.grid th{
-    font-family:'Fraunces',serif; font-size:11px; letter-spacing:1px; text-transform:uppercase;
-    color:#fff; padding:8px 4px; text-align:center; font-weight:600;
-    background:linear-gradient(160deg,var(--lilac),var(--lilac-dk));
-    border-radius:9px;
-  }
-  table.grid th.timecol{background:var(--surface-3); color:var(--muted);}
-  table.grid td{
-    vertical-align:top; padding:0; width:120px;
-  }
-  table.grid td.timecell{
-    font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted);
-    text-align:center; padding-top:10px; width:56px; white-space:nowrap;
-  }
-  .cell{
-    min-height:64px; border-radius:11px; padding:8px 9px;
-    background:var(--surface); border:1px solid var(--line);
-    display:flex; flex-direction:column; gap:5px; justify-content:center;
-    height:100%;
-  }
-  .cell.empty{background:repeating-linear-gradient(135deg, rgba(185,166,227,0.05) 0 6px, transparent 6px 12px); border-style:dashed; border-color:var(--line);}
-  .cell.L{background:rgba(201,182,234,0.22); border-color:rgba(185,166,227,0.55);}
-  .cell.T{background:rgba(243,205,223,0.22); border-color:rgba(226,166,195,0.55);}
-  .cell.P{background:rgba(207,234,217,0.28); border-color:rgba(160,205,178,0.6);}
-  .cell.BR{background:var(--surface-3); border-color:var(--line); align-items:center;}
-  .cell .top-row{display:flex; align-items:center; justify-content:space-between; gap:6px;}
-  .cell .subj{font-weight:700; font-size:13px; color:var(--ink); line-height:1.15;}
-  .cell .venue{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted);}
-  .cell .brk{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted); letter-spacing:1px; text-transform:uppercase;}
+    @keyframes pulse {
 
-  .legend-full{
-    display:flex; gap:16px; flex-wrap:wrap; padding:2px 6px 10px;
-    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);
-  }
-  .legend-full span{display:inline-flex; align-items:center; gap:6px;}
-  .legend-full i{width:11px;height:11px;border-radius:4px;}
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(185, 166, 227, 0.55);
+      }
 
-  .subj-key{
-    margin-top:10px; padding:12px 14px; background:var(--surface); border:1px solid var(--line); border-radius:14px;
-  }
-  .subj-key h4{margin:0 0 8px; font-family:'Fraunces',serif; font-size:11px; letter-spacing:1.2px; color:var(--muted); text-transform:uppercase; font-weight:600;}
-  .subj-key .row{display:flex; gap:10px; padding:4px 0; font-size:12px; border-bottom:1px dashed var(--line);}
-  .subj-key .row:last-child{border-bottom:none;}
-  .subj-key .row b{color:var(--lilac-dk); width:56px; flex-shrink:0; font-family:'JetBrains Mono',monospace;}
-  .subj-key .row span{color:var(--ink);}
-  .subj-key .note{margin-top:8px; font-size:10.5px; color:var(--muted); font-family:'JetBrains Mono',monospace; line-height:1.5;}
+      50% {
+        opacity: 0.6;
+        box-shadow: 0 0 0 6px rgba(185, 166, 227, 0);
+      }
+    }
 
-  @media (max-width:520px){
-    table.grid td{width:100px;}
-    .datebar .day{font-size:22px;}
-    .brand .txt b{font-size:13px;}
-  }
-</style>
+    .hero h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 20px;
+      margin: 0 0 6px;
+      color: var(--ink);
+      letter-spacing: 0.1px;
+    }
+
+    .hero .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 8px;
+      letter-spacing: 0.3px;
+      background: var(--surface-2);
+      color: var(--lilac-ink);
+      border: 1px solid var(--line);
+    }
+
+    .chip.venue::before {
+      content: "📍 ";
+    }
+
+    .chip.time::before {
+      content: "⏱ ";
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 10.5px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      letter-spacing: 0.6px;
+      color: #4a3f5c;
+    }
+
+    .badge.L {
+      background: var(--lecture);
+      color: #4a3f5c;
+    }
+
+    .badge.T {
+      background: var(--tutorial);
+      color: #5c3349;
+    }
+
+    .badge.P {
+      background: var(--practical);
+      color: #2f5b40;
+    }
+
+    .badge.B {
+      background: var(--break-c);
+      color: var(--muted);
+    }
+
+    /* ===== Today list (compact, scrolls internally) ===== */
+    .list-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 2px 4px 8px;
+    }
+
+    .list-head h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 12.5px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .list-head .cnt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .today-scroll {
+      max-height: 44vh;
+      overflow-y: auto;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      padding: 6px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--lilac) transparent;
+    }
+
+    .today-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .today-scroll::-webkit-scrollbar-thumb {
+      background: var(--lilac);
+      border-radius: 3px;
+    }
+
+    .row-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 10px;
+      border-radius: 12px;
+      margin: 3px 0;
+      border: 1px solid transparent;
+      transition: background .15s ease;
+    }
+
+    .row-item.past {
+      opacity: 0.45;
+    }
+
+    .row-item.live {
+      background: rgba(185, 166, 227, 0.14);
+      border-color: rgba(185, 166, 227, 0.45);
+    }
+
+    .row-item.next {
+      background: rgba(243, 205, 223, 0.16);
+      border-color: rgba(226, 166, 195, 0.4);
+    }
+
+    .row-item .t {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--muted);
+      width: 56px;
+      flex-shrink: 0;
+      line-height: 1.25;
+    }
+
+    .row-item .stripe-bar {
+      width: 4px;
+      align-self: stretch;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .row-item.type-L .stripe-bar {
+      background: var(--lecture);
+    }
+
+    .row-item.type-T .stripe-bar {
+      background: var(--tutorial);
+    }
+
+    .row-item.type-P .stripe-bar {
+      background: var(--practical);
+    }
+
+    .row-item.type-B .stripe-bar {
+      background: var(--break-c);
+    }
+
+    .row-item .body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .row-item .subj {
+      font-weight: 700;
+      font-size: 14.5px;
+      color: var(--ink);
+    }
+
+    .row-item .venue {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .row-item .tag {
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    .empty-day {
+      padding: 34px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .empty-day b {
+      color: var(--lilac-dk);
+      display: block;
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .legend-note {
+      margin-top: 16px;
+      padding: 0 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--muted);
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .legend-note span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-note i {
+      width: 9px;
+      height: 9px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    /* ===== Full timetable overlay ===== */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(93, 77, 122, 0.25);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+    }
+
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sheet {
+      width: 100%;
+      max-width: 960px;
+      max-height: 92vh;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(24px);
+      transition: transform .3s cubic-bezier(.2, .8, .2, 1);
+      box-shadow: 0 -20px 60px -24px rgba(93, 77, 122, 0.4);
+    }
+
+    .overlay.show .sheet {
+      transform: translateY(0);
+    }
+
+    .sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+    }
+
+    .sheet-head h3 {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 15px;
+      margin: 0;
+      letter-spacing: 0.1px;
+      color: var(--ink);
+    }
+
+    .sheet-head h3 small {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      font-size: 9.5px;
+      color: var(--muted);
+      letter-spacing: 1.2px;
+      margin-top: 3px;
+    }
+
+    .close-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      color: var(--lilac-ink);
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover {
+      border-color: var(--lilac);
+    }
+
+    .sheet-body {
+      overflow: auto;
+      padding: 14px 14px 22px;
+    }
+
+    table.grid {
+      border-collapse: separate;
+      border-spacing: 5px;
+      width: 100%;
+      min-width: 680px;
+    }
+
+    table.grid th {
+      font-family: 'Fraunces', serif;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #fff;
+      padding: 8px 4px;
+      text-align: center;
+      font-weight: 600;
+      background: linear-gradient(160deg, var(--lilac), var(--lilac-dk));
+      border-radius: 9px;
+    }
+
+    table.grid th.timecol {
+      background: var(--surface-3);
+      color: var(--muted);
+    }
+
+    table.grid td {
+      vertical-align: top;
+      padding: 0;
+      width: 120px;
+    }
+
+    table.grid td.timecell {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--muted);
+      text-align: center;
+      padding-top: 10px;
+      width: 56px;
+      white-space: nowrap;
+    }
+
+    .cell {
+      min-height: 64px;
+      border-radius: 11px;
+      padding: 8px 9px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .cell.empty {
+      background: repeating-linear-gradient(135deg, rgba(185, 166, 227, 0.05) 0 6px, transparent 6px 12px);
+      border-style: dashed;
+      border-color: var(--line);
+    }
+
+    .cell.L {
+      background: rgba(201, 182, 234, 0.22);
+      border-color: rgba(185, 166, 227, 0.55);
+    }
+
+    .cell.T {
+      background: rgba(243, 205, 223, 0.22);
+      border-color: rgba(226, 166, 195, 0.55);
+    }
+
+    .cell.P {
+      background: rgba(207, 234, 217, 0.28);
+      border-color: rgba(160, 205, 178, 0.6);
+    }
+
+    .cell.BR {
+      background: var(--surface-3);
+      border-color: var(--line);
+      align-items: center;
+    }
+
+    .cell .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .cell .subj {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--ink);
+      line-height: 1.15;
+    }
+
+    .cell .venue {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .cell .brk {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .legend-full {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 2px 6px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .legend-full span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-full i {
+      width: 11px;
+      height: 11px;
+      border-radius: 4px;
+    }
+
+    .subj-key {
+      margin-top: 10px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .subj-key h4 {
+      margin: 0 0 8px;
+      font-family: 'Fraunces', serif;
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .subj-key .row {
+      display: flex;
+      gap: 10px;
+      padding: 4px 0;
+      font-size: 12px;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .subj-key .row:last-child {
+      border-bottom: none;
+    }
+
+    .subj-key .row b {
+      color: var(--lilac-dk);
+      width: 56px;
+      flex-shrink: 0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .subj-key .row span {
+      color: var(--ink);
+    }
+
+    .subj-key .note {
+      margin-top: 8px;
+      font-size: 10.5px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.5;
+    }
+
+    @media (max-width:520px) {
+      table.grid td {
+        width: 100px;
+      }
+
+      .datebar .day {
+        font-size: 22px;
+      }
+
+      .brand .txt b {
+        font-size: 13px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
   <div class="topbar">
@@ -372,202 +852,203 @@
         <div class="subj-key">
           <h4>Subject Key</h4>
           <div id="subjKeyBody"></div>
-          <div class="note">Venue "G2" is a room code and happens to match your batch name — it's a coincidence, not a labeling error.</div>
+          <div class="note">Venue "G2" is a room code and happens to match your batch name — it's a coincidence, not a
+            labeling error.</div>
         </div>
       </div>
     </div>
   </div>
 
-<script>
-/* ============ DATA ============ */
-const SLOTS = [
-  {s:8, e:9,  label:"8-9 AM"},
-  {s:9, e:10, label:"9-10 AM"},
-  {s:10,e:11, label:"10-11 AM"},
-  {s:11,e:12, label:"11-12 PM"},
-  {s:12,e:13, label:"12-1 PM"},
-  {s:13,e:14, label:"1-2 PM"},
-  {s:14,e:15, label:"2-3 PM"},
-  {s:15,e:16, label:"3-4 PM"},
-];
+  <script>
+    /* ============ DATA ============ */
+    const SLOTS = [
+      { s: 8, e: 9, label: "8-9 AM" },
+      { s: 9, e: 10, label: "9-10 AM" },
+      { s: 10, e: 11, label: "10-11 AM" },
+      { s: 11, e: 12, label: "11-12 PM" },
+      { s: 12, e: 13, label: "12-1 PM" },
+      { s: 13, e: 14, label: "1-2 PM" },
+      { s: 14, e: 15, label: "2-3 PM" },
+      { s: 15, e: 16, label: "3-4 PM" },
+    ];
 
-const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-const DAY_LABELS = { Mon:"Monday", Tue:"Tuesday", Wed:"Wednesday", Thu:"Thursday", Fri:"Friday", Sat:"Saturday" };
-const WEEK_ORDER = ["Mon","Tue","Wed","Thu","Fri","Sat"];
+    const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const DAY_LABELS = { Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday" };
+    const WEEK_ORDER = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-// Subject legend
-let SUBJECTS = {
-  RCA:   {full:"Real and Complex Analysis", code:"26B11MA318"},
-  HSS:   {full:"HS311 — Humanities/Soc. Science elective (name not listed in source file)", code:"HS311"},
-  OS:    {full:"Operating Systems", code:"24B11CS312"},
-  IPCV:  {full:"Fundamentals of Image Processing and Computer Vision (CS Elective)", code:"26B12CS316"},
-  FSD:   {full:"Full Stack Development Lab", code:"FSD"},
-  RPROG: {full:"R Programming Lab", code:"RPROG"},
-};
+    // Subject legend
+    let SUBJECTS = {
+      RCA: { full: "Real and Complex Analysis", code: "26B11MA318" },
+      HSS: { full: "HS311 — Humanities/Soc. Science elective (name not listed in source file)", code: "HS311" },
+      OS: { full: "Operating Systems", code: "24B11CS312" },
+      IPCV: { full: "Fundamentals of Image Processing and Computer Vision (CS Elective)", code: "26B12CS316" },
+      FSD: { full: "Full Stack Development Lab", code: "FSD" },
+      RPROG: { full: "R Programming Lab", code: "RPROG" },
+    };
 
-function C(start,end,type,subj,venue){ return {start,end,type,kind:'class',subj,venue}; }
-function BR(start,end,label){ return {start,end,type:'B',kind:'break',label}; }
+    function C(start, end, type, subj, venue) { return { start, end, type, kind: 'class', subj, venue }; }
+    function BR(start, end, label) { return { start, end, type: 'B', kind: 'break', label }; }
 
-let SCHEDULE = {
-  Mon:[
-    C(10,11,'L','RCA','CS7'),
-    BR(12,13,"Lunch"),
-    C(13,15,'P','FSD','CL17/18'),
-  ],
-  Tue:[
-    C(10,11,'L','RCA','CS3'),
-    C(11,12,'L','HSS','CS3'),
-    BR(12,13,"Lunch"),
-    C(13,15,'P','RPROG','CL14/15'),
-  ],
-  Wed:[
-    C(9,10,'L','IPCV','G2'),
-    C(11,12,'L','HSS','G6'),
-    BR(12,13,"Lunch"),
-    C(13,14,'L','OS','CS4'),
-    C(14,16,'P','IPCV','CL17/18'),
-  ],
-  Thu:[
-    C(8,9,'L','IPCV','G2'),
-    C(10,11,'T','RCA','G5'),
-    BR(12,13,"Lunch"),
-    C(14,15,'T','RCA','G5'),
-    C(15,16,'L','OS','G5'),
-  ],
-  Fri:[
-    C(10,11,'L','OS','G2'),
-    C(11,12,'L','HSS','G2'),
-    BR(12,13,"Lunch"),
-  ],
-  Sat:[
-    C(10,12,'P','OS','CL14/15'),
-  ],
-};
+    let SCHEDULE = {
+      Mon: [
+        C(10, 11, 'L', 'RCA', 'CS7'),
+        BR(12, 13, "Lunch"),
+        C(13, 15, 'P', 'FSD', 'CL11'),
+      ],
+      Tue: [
+        C(10, 11, 'L', 'RCA', 'CS3'),
+        C(11, 12, 'L', 'HSS', 'CS3'),
+        BR(12, 13, "Lunch"),
+        C(13, 15, 'P', 'RPROG', 'MCL421'),
+      ],
+      Wed: [
+        C(9, 10, 'L', 'IPCV', 'G2'),
+        C(11, 12, 'L', 'HSS', 'G6'),
+        BR(12, 13, "Lunch"),
+        C(13, 14, 'L', 'OS', 'CS4'),
+        C(14, 16, 'P', 'IPCV', 'CL17/18'),
+      ],
+      Thu: [
+        C(8, 9, 'L', 'IPCV', 'G2'),
+        C(10, 11, 'T', 'RCA', 'G5'),
+        BR(12, 13, "Lunch"),
+        C(14, 15, 'T', 'RCA', 'G5'),
+        C(15, 16, 'L', 'OS', 'G5'),
+      ],
+      Fri: [
+        C(10, 11, 'L', 'OS', 'G2'),
+        C(11, 12, 'L', 'HSS', 'G2'),
+        BR(12, 13, "Lunch"),
+      ],
+      Sat: [
+        C(10, 12, 'P', 'OS', 'CL14/15'),
+      ],
+    };
 
-/* ============ LOCAL STORAGE PERSISTENCE & OFFLINE CACHE ============ */
-const STORAGE_KEY_SCHEDULE = 'g2_timetable_schedule_v2';
-const STORAGE_KEY_SUBJECTS = 'g2_timetable_subjects_v2';
+    /* ============ LOCAL STORAGE PERSISTENCE & OFFLINE CACHE ============ */
+    const STORAGE_KEY_SCHEDULE = 'g2_timetable_schedule_v2';
+    const STORAGE_KEY_SUBJECTS = 'g2_timetable_subjects_v2';
 
-try {
-  // Save defaults to localStorage if not present, or load from localStorage if already saved
-  if (!localStorage.getItem(STORAGE_KEY_SCHEDULE)) {
-    localStorage.setItem(STORAGE_KEY_SCHEDULE, JSON.stringify(SCHEDULE));
-  } else {
-    const savedSchedule = JSON.parse(localStorage.getItem(STORAGE_KEY_SCHEDULE));
-    if (savedSchedule && typeof savedSchedule === 'object') {
-      SCHEDULE = savedSchedule;
+    try {
+      // Save defaults to localStorage if not present, or load from localStorage if already saved
+      if (!localStorage.getItem(STORAGE_KEY_SCHEDULE)) {
+        localStorage.setItem(STORAGE_KEY_SCHEDULE, JSON.stringify(SCHEDULE));
+      } else {
+        const savedSchedule = JSON.parse(localStorage.getItem(STORAGE_KEY_SCHEDULE));
+        if (savedSchedule && typeof savedSchedule === 'object') {
+          SCHEDULE = savedSchedule;
+        }
+      }
+
+      if (!localStorage.getItem(STORAGE_KEY_SUBJECTS)) {
+        localStorage.setItem(STORAGE_KEY_SUBJECTS, JSON.stringify(SUBJECTS));
+      } else {
+        const savedSubjects = JSON.parse(localStorage.getItem(STORAGE_KEY_SUBJECTS));
+        if (savedSubjects && typeof savedSubjects === 'object') {
+          SUBJECTS = savedSubjects;
+        }
+      }
+    } catch (e) {
+      console.warn('localStorage access failed or offline restricted:', e);
     }
-  }
 
-  if (!localStorage.getItem(STORAGE_KEY_SUBJECTS)) {
-    localStorage.setItem(STORAGE_KEY_SUBJECTS, JSON.stringify(SUBJECTS));
-  } else {
-    const savedSubjects = JSON.parse(localStorage.getItem(STORAGE_KEY_SUBJECTS));
-    if (savedSubjects && typeof savedSubjects === 'object') {
-      SUBJECTS = savedSubjects;
+    // Register Service Worker for 100% offline PWA capability
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then((reg) => console.log('[PWA] Service Worker registered for offline access:', reg.scope))
+          .catch((err) => console.warn('[PWA] Service Worker registration failed:', err));
+      });
     }
-  }
-} catch (e) {
-  console.warn('localStorage access failed or offline restricted:', e);
-}
 
-// Register Service Worker for 100% offline PWA capability
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then((reg) => console.log('[PWA] Service Worker registered for offline access:', reg.scope))
-      .catch((err) => console.warn('[PWA] Service Worker registration failed:', err));
-  });
-}
+    /* ============ HELPERS ============ */
+    function fmtHour(h) {
+      const hh = Math.floor(h);
+      const mm = Math.round((h - hh) * 60);
+      const ampm = hh >= 12 ? 'PM' : 'AM';
+      let disp = hh % 12; if (disp === 0) disp = 12;
+      return disp + ":" + String(mm).padStart(2, '0') + " " + ampm;
+    }
+    function nowDecimal(d) { return d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600; }
 
-/* ============ HELPERS ============ */
-function fmtHour(h){
-  const hh = Math.floor(h);
-  const mm = Math.round((h-hh)*60);
-  const ampm = hh>=12 ? 'PM':'AM';
-  let disp = hh%12; if(disp===0) disp=12;
-  return disp+":"+String(mm).padStart(2,'0')+" "+ampm;
-}
-function nowDecimal(d){ return d.getHours() + d.getMinutes()/60 + d.getSeconds()/3600; }
-
-/* ============ RENDER: header/date/clock ============ */
-function renderHeader(now){
-  const dayShort = WEEK_ORDER.includes(DAYS[now.getDay()]) ? DAYS[now.getDay()] : null;
-  document.getElementById('dayName').textContent = dayShort ? DAY_LABELS[dayShort] : "Sunday";
-  document.getElementById('dateStr').textContent = now.toLocaleDateString(undefined,{month:'short', day:'numeric', year:'numeric'});
-  let h = now.getHours()%12; if(h===0) h=12;
-  const m = String(now.getMinutes()).padStart(2,'0');
-  const ap = now.getHours()>=12 ? 'PM':'AM';
-  document.getElementById('clockNow').textContent = h+":"+m+" "+ap;
-  return dayShort;
-}
+    /* ============ RENDER: header/date/clock ============ */
+    function renderHeader(now) {
+      const dayShort = WEEK_ORDER.includes(DAYS[now.getDay()]) ? DAYS[now.getDay()] : null;
+      document.getElementById('dayName').textContent = dayShort ? DAY_LABELS[dayShort] : "Sunday";
+      document.getElementById('dateStr').textContent = now.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+      let h = now.getHours() % 12; if (h === 0) h = 12;
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const ap = now.getHours() >= 12 ? 'PM' : 'AM';
+      document.getElementById('clockNow').textContent = h + ":" + m + " " + ap;
+      return dayShort;
+    }
 
 
 
-/* ============ RENDER: hero + list ============ */
-function renderTodayPanel(dayShort, now){
-  const items = (SCHEDULE[dayShort]||[]).slice().sort((a,b)=>a.start-b.start);
-  const nowH = nowDecimal(now);
+    /* ============ RENDER: hero + list ============ */
+    function renderTodayPanel(dayShort, now) {
+      const items = (SCHEDULE[dayShort] || []).slice().sort((a, b) => a.start - b.start);
+      const nowH = nowDecimal(now);
 
-  const heroCard = document.getElementById('heroCard');
-  const heroLabel = document.getElementById('heroLabel');
-  const heroTitle = document.getElementById('heroTitle');
-  const heroMeta = document.getElementById('heroMeta');
+      const heroCard = document.getElementById('heroCard');
+      const heroLabel = document.getElementById('heroLabel');
+      const heroTitle = document.getElementById('heroTitle');
+      const heroMeta = document.getElementById('heroMeta');
 
-  let current=null, next=null;
-  for(const it of items){
-    if(nowH>=it.start && nowH<it.end){ current=it; break; }
-  }
-  if(!current){
-    for(const it of items){ if(it.start>nowH){ next=it; break; } }
-  }
+      let current = null, next = null;
+      for (const it of items) {
+        if (nowH >= it.start && nowH < it.end) { current = it; break; }
+      }
+      if (!current) {
+        for (const it of items) { if (it.start > nowH) { next = it; break; } }
+      }
 
-  heroMeta.innerHTML='';
-  if(current && current.kind==='class'){
-    heroCard.classList.add('live');
-    heroLabel.textContent = 'HAPPENING NOW';
-    heroTitle.textContent = SUBJECTS[current.subj].full;
-    heroMeta.innerHTML = `
-      <span class="badge ${current.type}">${current.type==='L'?'LECTURE':current.type==='T'?'TUTORIAL':'PRACTICAL'}</span>
+      heroMeta.innerHTML = '';
+      if (current && current.kind === 'class') {
+        heroCard.classList.add('live');
+        heroLabel.textContent = 'HAPPENING NOW';
+        heroTitle.textContent = SUBJECTS[current.subj].full;
+        heroMeta.innerHTML = `
+      <span class="badge ${current.type}">${current.type === 'L' ? 'LECTURE' : current.type === 'T' ? 'TUTORIAL' : 'PRACTICAL'}</span>
       <span class="chip time">${fmtHour(current.start)} – ${fmtHour(current.end)}</span>
       <span class="chip venue">${current.venue}</span>`;
-  } else if(current && current.kind==='break'){
-    heroCard.classList.remove('live');
-    heroLabel.textContent = current.label==='Lunch' ? 'ON BREAK' : 'BLOCKED SLOT';
-    heroTitle.textContent = current.label==='Lunch' ? 'Lunch break' : 'Reserved / no class';
-    heroMeta.innerHTML = `<span class="chip time">${fmtHour(current.start)} – ${fmtHour(current.end)}</span>`;
-  } else if(next){
-    heroCard.classList.remove('live');
-    heroLabel.textContent = 'UP NEXT';
-    if(next.kind==='class'){
-      heroTitle.textContent = SUBJECTS[next.subj].full;
-      heroMeta.innerHTML = `
-        <span class="badge ${next.type}">${next.type==='L'?'LECTURE':next.type==='T'?'TUTORIAL':'PRACTICAL'}</span>
+      } else if (current && current.kind === 'break') {
+        heroCard.classList.remove('live');
+        heroLabel.textContent = current.label === 'Lunch' ? 'ON BREAK' : 'BLOCKED SLOT';
+        heroTitle.textContent = current.label === 'Lunch' ? 'Lunch break' : 'Reserved / no class';
+        heroMeta.innerHTML = `<span class="chip time">${fmtHour(current.start)} – ${fmtHour(current.end)}</span>`;
+      } else if (next) {
+        heroCard.classList.remove('live');
+        heroLabel.textContent = 'UP NEXT';
+        if (next.kind === 'class') {
+          heroTitle.textContent = SUBJECTS[next.subj].full;
+          heroMeta.innerHTML = `
+        <span class="badge ${next.type}">${next.type === 'L' ? 'LECTURE' : next.type === 'T' ? 'TUTORIAL' : 'PRACTICAL'}</span>
         <span class="chip time">Starts ${fmtHour(next.start)}</span>
         <span class="chip venue">${next.venue}</span>`;
-    } else {
-      heroTitle.textContent = next.label;
-      heroMeta.innerHTML = `<span class="chip time">Starts ${fmtHour(next.start)}</span>`;
-    }
-  } else {
-    heroCard.classList.remove('live');
-    heroLabel.textContent = 'STANDBY';
-    heroTitle.textContent = items.length ? 'Day complete — no more sessions' : 'No classes scheduled today';
-  }
+        } else {
+          heroTitle.textContent = next.label;
+          heroMeta.innerHTML = `<span class="chip time">Starts ${fmtHour(next.start)}</span>`;
+        }
+      } else {
+        heroCard.classList.remove('live');
+        heroLabel.textContent = 'STANDBY';
+        heroTitle.textContent = items.length ? 'Day complete — no more sessions' : 'No classes scheduled today';
+      }
 
-  const scroll = document.getElementById('todayScroll');
-  document.getElementById('dayCount').textContent = items.filter(i=>i.kind==='class').length + ' session(s)';
-  scroll.innerHTML='';
-  if(!items.length){
-    scroll.innerHTML = `<div class="empty-day"><b>FREE DAY</b>No sessions scheduled for this day.<br>Enjoy the rest.</div>`;
-    return;
-  }
-  items.forEach(it=>{
-    const row = document.createElement('div');
-    const state = (nowH>=it.end) ? 'past' : (current===it ? 'live' : (next===it ? 'next':''));
-    row.className = `row-item type-${it.type} ${state}`;
-    if(it.kind==='class'){
-      row.innerHTML = `
+      const scroll = document.getElementById('todayScroll');
+      document.getElementById('dayCount').textContent = items.filter(i => i.kind === 'class').length + ' session(s)';
+      scroll.innerHTML = '';
+      if (!items.length) {
+        scroll.innerHTML = `<div class="empty-day"><b>FREE DAY</b>No sessions scheduled for this day.<br>Enjoy the rest.</div>`;
+        return;
+      }
+      items.forEach(it => {
+        const row = document.createElement('div');
+        const state = (nowH >= it.end) ? 'past' : (current === it ? 'live' : (next === it ? 'next' : ''));
+        row.className = `row-item type-${it.type} ${state}`;
+        if (it.kind === 'class') {
+          row.innerHTML = `
         <div class="t">${fmtHour(it.start)}<br>${fmtHour(it.end)}</div>
         <div class="stripe-bar"></div>
         <div class="body">
@@ -578,49 +1059,49 @@ function renderTodayPanel(dayShort, now){
           <div class="badge ${it.type}">${it.type}</div>
           <div class="chip venue" style="margin-top:6px;">${it.venue}</div>
         </div>`;
-    } else {
-      row.innerHTML = `
+        } else {
+          row.innerHTML = `
         <div class="t">${fmtHour(it.start)}<br>${fmtHour(it.end)}</div>
         <div class="stripe-bar"></div>
         <div class="body"><div class="subj">${it.label}</div></div>
         <div class="tag"><div class="badge B">—</div></div>`;
-    }
-    scroll.appendChild(row);
-  });
-
-  requestAnimationFrame(()=>{
-    const target = scroll.querySelector('.row-item.live') || scroll.querySelector('.row-item.next');
-    if(target){
-      scroll.scrollTo({top: target.offsetTop - 8, behavior:'smooth'});
-    }
-  });
-}
-
-/* ============ RENDER: full grid (rowspan-aware for multi-hour items) ============ */
-function buildFullGrid(){
-  const table = document.getElementById('gridTable');
-  let html = '<thead><tr><th class="timecol">Time</th>';
-  WEEK_ORDER.forEach(d=> html += `<th>${DAY_LABELS[d]}</th>`);
-  html += '</tr></thead><tbody>';
-
-  // track which (day,slotIndex) cells are already consumed by a rowspan from above
-  const skip = {};
-  WEEK_ORDER.forEach(d=> skip[d] = new Set());
-
-  SLOTS.forEach((slot, si)=>{
-    html += `<tr><td class="timecell">${slot.label}</td>`;
-    WEEK_ORDER.forEach(d=>{
-      if(skip[d].has(si)) return; // covered by a previous rowspan
-      const items = SCHEDULE[d]||[];
-      const match = items.find(it=> it.start===slot.s );
-      if(match){
-        const span = Math.max(1, Math.round(match.end - match.start));
-        if(span>1){
-          for(let k=1;k<span;k++) skip[d].add(si+k);
         }
-        const cellMinH = span > 1 ? `${span*64 + (span-1)*5}px` : '64px';
-        if(match.kind==='class'){
-          html += `<td rowspan="${span}"><div class="cell ${match.type}" style="min-height:${cellMinH}; height:100%;">
+        scroll.appendChild(row);
+      });
+
+      requestAnimationFrame(() => {
+        const target = scroll.querySelector('.row-item.live') || scroll.querySelector('.row-item.next');
+        if (target) {
+          scroll.scrollTo({ top: target.offsetTop - 8, behavior: 'smooth' });
+        }
+      });
+    }
+
+    /* ============ RENDER: full grid (rowspan-aware for multi-hour items) ============ */
+    function buildFullGrid() {
+      const table = document.getElementById('gridTable');
+      let html = '<thead><tr><th class="timecol">Time</th>';
+      WEEK_ORDER.forEach(d => html += `<th>${DAY_LABELS[d]}</th>`);
+      html += '</tr></thead><tbody>';
+
+      // track which (day,slotIndex) cells are already consumed by a rowspan from above
+      const skip = {};
+      WEEK_ORDER.forEach(d => skip[d] = new Set());
+
+      SLOTS.forEach((slot, si) => {
+        html += `<tr><td class="timecell">${slot.label}</td>`;
+        WEEK_ORDER.forEach(d => {
+          if (skip[d].has(si)) return; // covered by a previous rowspan
+          const items = SCHEDULE[d] || [];
+          const match = items.find(it => it.start === slot.s);
+          if (match) {
+            const span = Math.max(1, Math.round(match.end - match.start));
+            if (span > 1) {
+              for (let k = 1; k < span; k++) skip[d].add(si + k);
+            }
+            const cellMinH = span > 1 ? `${span * 64 + (span - 1) * 5}px` : '64px';
+            if (match.kind === 'class') {
+              html += `<td rowspan="${span}"><div class="cell ${match.type}" style="min-height:${cellMinH}; height:100%;">
             <div class="top-row">
               <span class="badge ${match.type}">${match.type}</span>
               ${span > 1 ? `<span style="font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--ink); opacity:0.75; font-weight:600;">${fmtHour(match.start)} – ${fmtHour(match.end)}</span>` : ''}
@@ -628,48 +1109,49 @@ function buildFullGrid(){
             <div class="subj">${match.subj}</div>
             <div class="venue">${match.venue}</div>
           </div></td>`;
-        } else {
-          html += `<td rowspan="${span}"><div class="cell BR" style="min-height:${cellMinH}; height:100%;"><div class="brk">${match.label}</div></div></td>`;
-        }
-      } else {
-        html += `<td><div class="cell empty"></div></td>`;
-      }
+            } else {
+              html += `<td rowspan="${span}"><div class="cell BR" style="min-height:${cellMinH}; height:100%;"><div class="brk">${match.label}</div></div></td>`;
+            }
+          } else {
+            html += `<td><div class="cell empty"></div></td>`;
+          }
+        });
+        html += '</tr>';
+      });
+      html += '</tbody>';
+      table.innerHTML = html;
+
+      const keyBody = document.getElementById('subjKeyBody');
+      keyBody.innerHTML = Object.entries(SUBJECTS).map(([abbr, info]) =>
+        `<div class="row"><b>${abbr}</b><span>${info.full} <span style="color:var(--muted)">(${info.code})</span></span></div>`
+      ).join('');
+    }
+
+    /* ============ TICK ============ */
+    function tick() {
+      const now = new Date();
+      const dayShort = renderHeader(now);
+      renderTodayPanel(dayShort, now);
+    }
+
+    tick();
+    setInterval(tick, 30000);
+
+    /* ============ Overlay open/close ============ */
+    const overlay = document.getElementById('overlay');
+    document.getElementById('openFull').addEventListener('click', () => {
+      buildFullGrid();
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
     });
-    html += '</tr>';
-  });
-  html += '</tbody>';
-  table.innerHTML = html;
-
-  const keyBody = document.getElementById('subjKeyBody');
-  keyBody.innerHTML = Object.entries(SUBJECTS).map(([abbr,info])=>
-    `<div class="row"><b>${abbr}</b><span>${info.full} <span style="color:var(--muted)">(${info.code})</span></span></div>`
-  ).join('');
-}
-
-/* ============ TICK ============ */
-function tick(){
-  const now = new Date();
-  const dayShort = renderHeader(now);
-  renderTodayPanel(dayShort, now);
-}
-
-tick();
-setInterval(tick, 30000);
-
-/* ============ Overlay open/close ============ */
-const overlay = document.getElementById('overlay');
-document.getElementById('openFull').addEventListener('click', ()=>{
-  buildFullGrid();
-  overlay.classList.add('show');
-  document.body.style.overflow='hidden';
-});
-document.getElementById('closeFull').addEventListener('click', closeOverlay);
-overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeOverlay(); });
-function closeOverlay(){
-  overlay.classList.remove('show');
-  document.body.style.overflow='';
-}
-document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeOverlay(); });
-</script>
+    document.getElementById('closeFull').addEventListener('click', closeOverlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeOverlay(); });
+    function closeOverlay() {
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeOverlay(); });
+  </script>
 </body>
+
 </html>
